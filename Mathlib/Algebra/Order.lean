@@ -202,14 +202,14 @@ section LinearOrder
 We assume that every linear ordered type has decidable `(≤)`, `(<)`, and `(=)`. -/
 class LinearOrder (α : Type u) extends PartialOrder α :=
 (le_total : ∀ a b : α, a ≤ b ∨ b ≤ a)
-(decidable_le : DecidableRel (. ≤ . : α → α → Prop))
-(decidable_eq : DecidableEq α := @decidableEq_of_decidableLe _ _ decidable_le)
-(decidable_lt : DecidableRel (. < . : α → α → Prop) :=
-    @decidableLt_of_decidableLe _ _ decidable_le)
+(decidableLe : DecidableRel (. ≤ . : α → α → Prop))
+(decidableEq : DecidableEq α := @decidableEq_of_decidableLe _ _ decidableLe)
+(decidableLt : DecidableRel (. < . : α → α → Prop) :=
+    @decidableLt_of_decidableLe _ _ decidableLe)
 
 variable [LinearOrder α]
 
-attribute [local instance] LinearOrder.decidable_le
+attribute [local instance] LinearOrder.decidableLe
 
 theorem le_total : ∀ a b : α, a ≤ b ∨ b ≤ a :=
 LinearOrder.le_total
@@ -241,7 +241,6 @@ match lt_trichotomy a b with
 | Or.inr (Or.inl heq) => heq ▸ le_refl a
 | Or.inr (Or.inr hgt) => absurd hgt h
 
-
 theorem le_of_not_gt {a b : α} : ¬ a > b → a ≤ b := le_of_not_lt
 
 theorem lt_of_not_ge {a b : α} (h : ¬ a ≥ b) : a < b :=
@@ -264,9 +263,8 @@ match lt_trichotomy a b with
 
 theorem ne_iff_lt_or_gt {a b : α} : a ≠ b ↔ a < b ∨ a > b :=
 ⟨lt_or_gt_of_ne, λ o => match o with
-  | Or.inl ol => ne_of_lt ol
-  | Or.inr or => ne_of_gt or
-⟩
+  | Or.inl o => ne_of_lt o
+  | Or.inr o => ne_of_gt o⟩
 
 theorem lt_iff_not_ge (x y : α) : x < y ↔ ¬ x ≥ y :=
 ⟨not_le_of_gt, lt_of_not_ge⟩
@@ -276,19 +274,19 @@ theorem lt_iff_not_ge (x y : α) : x < y ↔ ¬ x ≥ y :=
 @[simp] theorem not_le {a b : α} : ¬ a ≤ b ↔ b < a := (lt_iff_not_ge _ _).symm
 
 instance (a b : α) : Decidable (a < b) :=
-LinearOrder.decidable_lt a b
+LinearOrder.decidableLt a b
 
 instance (a b : α) : Decidable (a ≤ b) :=
-LinearOrder.decidable_le a b
+LinearOrder.decidableLe a b
 
 instance (a b : α) : Decidable (a = b) :=
-LinearOrder.decidable_eq a b
+LinearOrder.decidableEq a b
 
 theorem eq_or_lt_of_not_lt {a b : α} (h : ¬ a < b) : a = b ∨ b < a :=
 if h₁ : a = b then Or.inl h₁
 else Or.inr (lt_of_not_ge (λ hge => h (lt_of_le_of_ne hge h₁)))
 
-/- TODO: instances of classes that haven't been defined.
+/- TODO: instances of classes that don't exist
 
 instance : is_total_preorder α (≤) :=
 {trans := @le_trans _ _, total := le_total}
