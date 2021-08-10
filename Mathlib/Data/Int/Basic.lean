@@ -46,6 +46,7 @@ lemma ofNat_succ (n : ℕ) : ofNat (succ n) = ofNat n + 1 := rfl
 lemma ofNat_add (n m : ℕ) : ofNat (n + m) = ofNat n + ofNat m := rfl
 lemma ofNat_mul (n m : ℕ) : ofNat (n * m) = ofNat n * ofNat m := rfl
 
+protected lemma neg_zero : -(0 : ℤ) = 0 := rfl
 lemma neg_ofNat_zero : -(ofNat 0) = 0 := rfl
 lemma neg_ofNat_succ (n : ℕ) : -(ofNat (succ n)) = -[1+ n] := rfl
 lemma neg_negSucc (n : ℕ) : -(-[1+ n]) = ofNat (succ n) := rfl
@@ -481,7 +482,7 @@ protected lemma neg_add {a b : ℤ} : - (a + b) = -a + -b := by
     rw [Int.add_right_neg, Int.zero_add, Int.add_right_neg, Int.add_zero]
   rwa [Int.add_left_neg, Int.zero_add] at h₁
 
-lemma negSucc_coe' (n : ℕ) : -[1+ n] = -↑n - 1 :=
+lemma negSucc_ofNat' (n : ℕ) : -[1+ n] = -ofNat n - 1 :=
 by rw [Int.sub_eq_add_neg, ← Int.neg_add]; rfl
 
 protected lemma coe_nat_sub {n m : ℕ} : n ≤ m → (↑(m - n) : ℤ) = ↑m - ↑n := ofNat_sub
